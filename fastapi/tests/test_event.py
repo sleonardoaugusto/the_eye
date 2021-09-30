@@ -9,4 +9,4 @@ def test_should_create_event_task(send_task, client, faker):
     r = client.post('/event', json=payload)
 
     assert r.status_code == status.HTTP_202_ACCEPTED
-    send_task.assert_called_with('tasks.event', kwargs=payload)
+    send_task.assert_called_with('tasks.event', [payload])
