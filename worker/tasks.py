@@ -4,9 +4,13 @@ from celery import Celery
 from celery.utils.log import get_task_logger
 from dotenv import load_dotenv
 
-load_dotenv('.env')
+from db import Base, engine
 
 logger = get_task_logger(__name__)
+
+Base.metadata.create_all(engine)
+
+load_dotenv('.env')
 
 app = Celery()
 app.conf.broker_url = os.environ.get("CELERY_BROKER_URL")
