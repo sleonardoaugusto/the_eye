@@ -1,23 +1,38 @@
-import os
+from dataclasses import dataclass
 
 from celery import Celery
 from celery.utils.log import get_task_logger
-from dotenv import load_dotenv
+from sqlalchemy.orm import session
 
-from db import Base, engine
+from db import engine, Base, SessionLocal
+from models import Session
+from settings import settings
 
 logger = get_task_logger(__name__)
-
 Base.metadata.create_all(engine)
 
-load_dotenv('.env')
 
 app = Celery()
-app.conf.broker_url = os.environ.get("CELERY_BROKER_URL")
-app.conf.result_backend = os.environ.get('CELERY_RESULT_BACKEND')
+app.conf.broker_url = settings.broker_url
+app.conf.result_backend = settings.result_backend
+
+
+@dataclass
+class EventService:
+    db: session.Session
+
+    def _extract_data(self, data):
+        return {'id': data['session_id']}
+
+    def create(self, data):
+        data_extracted = self._extract_data(data)
+        db_obj = Session(**data_extracted)
+        self.db.add(db_obj)
+        self.db.commit()
+        self.db.refresh(db_obj)
 
 
 @app.task()
 def event(data: dict):
     logger.info('Got Request - Starting work ')
-    print(data)
+    EventService(SessionLocal()).create(data)
