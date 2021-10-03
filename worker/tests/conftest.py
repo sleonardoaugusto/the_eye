@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 from faker import Faker
 
+from db import SessionLocal
 from settings import Environment
 
 
@@ -22,3 +23,9 @@ def delete_database():
     yield
     db_file = 'eye_test.db'
     Path(Path().parent).joinpath(db_file).unlink()
+
+
+@pytest.fixture
+def db():
+    db = SessionLocal()
+    return db

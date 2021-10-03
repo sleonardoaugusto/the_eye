@@ -1,11 +1,14 @@
+import datetime
 from dataclasses import dataclass
 
 from celery import Celery
 from celery.utils.log import get_task_logger
-from sqlalchemy.orm import session
+from sqlalchemy.orm import Session
 
+import crud
+import models
+import schemas
 from db import engine, Base, SessionLocal
-from models import Session
 from settings import settings
 
 logger = get_task_logger(__name__)
@@ -19,17 +22,25 @@ app.conf.result_backend = settings.result_backend
 
 @dataclass
 class EventService:
-    db: session.Session
+    db: Session
 
-    def _extract_data(self, data):
-        return {'id': data['session_id']}
+    def _parse_data(self, data) -> [schemas.SessionCreate, schemas.EventSchema]:
+        return (
+            schemas.SessionCreate(uuid=data['session_id']),
+            schemas.EventSchema(
+                category=models.Event.Category(data['category']),
+                name=models.Event.Name(data['name']),
+                data=data['data'],
+                timestamp=datetime.datetime.fromisoformat(data['timestamp']),
+            ),
+        )
 
     def create(self, data):
-        data_extracted = self._extract_data(data)
-        db_obj = Session(**data_extracted)
-        self.db.add(db_obj)
-        self.db.commit()
-        self.db.refresh(db_obj)
+        session, event = self._parse_data(data)
+        session = crud.session.create(self.db, session)
+        crud.event.create(
+            self.db, schemas.EventCreate(session_id=session.id, **event.dict())
+        )
 
 
 @app.task()
