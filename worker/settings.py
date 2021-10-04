@@ -27,11 +27,10 @@ class DevSettings(BaseSettings):
 class Settings:
     @property
     def environment(self):
-        return (
-            Environment.DEVELOPMENT
-            if os.environ.get('ENVIRONMENT')
-            else Environment.TEST
-        )
+        if os.environ.get('ENVIRONMENT') == Environment.TEST.value:
+            return Environment.TEST
+        else:
+            return Environment.DEVELOPMENT
 
     def get_settings(self):
         settings = (

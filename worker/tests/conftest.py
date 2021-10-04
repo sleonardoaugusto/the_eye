@@ -1,21 +1,18 @@
 import os
+
+os.environ['ENVIRONMENT'] = 'test'
+
 from pathlib import Path
 
 import pytest
 from faker import Faker
 
 from db import SessionLocal
-from settings import Environment
 
 
 @pytest.fixture
 def faker() -> Faker:
     return Faker()
-
-
-@pytest.fixture(autouse=True, scope='session')
-def setup():
-    os.environ['ENVIRONMENT'] = Environment.TEST.value
 
 
 @pytest.fixture(autouse=True)
