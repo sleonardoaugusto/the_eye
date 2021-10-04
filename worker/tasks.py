@@ -6,7 +6,6 @@ from celery.utils.log import get_task_logger
 from sqlalchemy.orm import Session
 
 import crud
-import models
 import schemas
 from db import engine, Base, SessionLocal
 from settings import settings
@@ -28,8 +27,8 @@ class EventService:
         return (
             schemas.SessionCreate(uuid=data['session_id']),
             schemas.EventSchema(
-                category=models.Event.Category(data['category']),
-                name=models.Event.Name(data['name']),
+                category=data['category'],
+                name=data['name'],
                 data=data['data'],
                 timestamp=datetime.datetime.fromisoformat(data['timestamp']),
             ),

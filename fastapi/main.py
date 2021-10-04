@@ -17,7 +17,7 @@ celery_app.conf.result_backend = os.environ.get('CELERY_RESULT_BACKEND')
 
 
 @app.post("/event", status_code=status.HTTP_202_ACCEPTED)
-def root(event: schemas.EventCreate):
+def create_event(event: schemas.EventCreate):
     r = celery_app.send_task('tasks.event', [event.dict()])
     return r.id
 

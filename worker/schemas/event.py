@@ -1,12 +1,11 @@
-import enum
 from datetime import datetime
 
 from pydantic import BaseModel
 
 
 class EventSchema(BaseModel):
-    category: enum.Enum
-    name: enum.Enum
+    category: str
+    name: str
     data: dict
     timestamp: datetime
 
