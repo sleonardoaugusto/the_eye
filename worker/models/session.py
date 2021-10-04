@@ -8,5 +8,5 @@ class Session(Base):
     __tablename__ = 'sessions'
 
     id = Column(Integer, primary_key=True, index=True)
-    uuid = Column(String)
+    uuid = Column(String, unique=True)
     event = relationship("Event", back_populates="session")

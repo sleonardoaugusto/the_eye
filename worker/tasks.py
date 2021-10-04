@@ -35,7 +35,7 @@ class EventService:
 
     def create(self, data):
         session, event = self._parse_data(data)
-        session = crud.session.create(self.db, session)
+        session = crud.session.get_or_create(self.db, session)
         crud.event.create(
             self.db, schemas.EventCreate(session_id=session.id, **event.dict())
         )
