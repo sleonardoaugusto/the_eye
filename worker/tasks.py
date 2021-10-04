@@ -1,4 +1,3 @@
-import datetime
 from dataclasses import dataclass
 
 from celery import Celery
@@ -30,7 +29,7 @@ class EventService:
                 category=data['category'],
                 name=data['name'],
                 data=data['data'],
-                timestamp=datetime.datetime.fromisoformat(data['timestamp']),
+                timestamp=data['timestamp'],
             ),
         )
 

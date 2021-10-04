@@ -10,7 +10,7 @@ def test_should_create_event(faker, db):
         'category': 'page interaction',
         'name': 'pageview',
         'data': {'key': 'value'},
-        'timestamp': '2021-01-01 09:15:27.243860',
+        'timestamp': datetime.datetime.fromisoformat('2021-01-01 09:15:27.243860'),
     }
     tasks.event(payload)
     event = db.query(Event).first()
@@ -18,4 +18,4 @@ def test_should_create_event(faker, db):
     assert event.category == payload['category']
     assert event.name == payload['name']
     assert event.data == payload['data']
-    assert event.timestamp == datetime.datetime.fromisoformat(payload['timestamp'])
+    assert event.timestamp == payload['timestamp']
